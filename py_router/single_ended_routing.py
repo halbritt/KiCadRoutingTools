@@ -4607,8 +4607,9 @@ def get_all_segment_tap_points(
             if key not in tap_points:
                 tap_points[key] = (seg.start_x, seg.start_y)
         else:
-            # Sample along segment at grid step intervals
-            num_steps = max(1, int(length / coord.grid_step))
+            # Axial and 45-degree grid segments advance one cell per step.
+            # Round the span: float subtraction can put an integral count just below it.
+            num_steps = max(1, round(max(abs(dx), abs(dy)) / coord.grid_step))
             for i in range(num_steps + 1):
                 t = i / num_steps
                 x = seg.start_x + t * dx

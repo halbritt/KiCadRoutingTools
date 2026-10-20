@@ -103,6 +103,18 @@ With the default 0.1mm grid step:
 - All routing decisions happen in integer grid space
 - Final output is converted back to floating-point mm
 
+Multipoint taps sample existing segments with
+`round(max(abs(dx), abs(dy)) / grid_step)` steps (at least one). On-grid
+axial and 45-degree segments therefore provide one physical tap per grid
+cell. Using truncated Euclidean distance can skip axial cells or put diagonal
+taps between cells, creating short T-junction weld stubs that KiCad reports
+as `track_dangling`. Off-grid copper retains points on its original line;
+via coordinates and layer deduplication remain unchanged.
+
+The owned-board regression is `python3 tests/test_krt64_tap_grid.py`. It
+requires the routing runtime, `pcbnew` and `kicad-cli`, and checks native DRC,
+pad completion and repeated copper geometry on two fixed footprint orders.
+
 ## Obstacle Map Architecture
 
 The `GridObstacleMap` (implemented in Rust) tracks blocked cells efficiently using hash sets.
